@@ -36,4 +36,4 @@ templates = Jinja2Templates(directory=template_dir)
 def root(request: Request, db=Depends(get_db)):
     # Fetch changes to display in the dashboard
     changes = db.query(models.CADChange).order_by(models.CADChange.id.desc()).limit(50).all()
-    return templates.TemplateResponse("index.html", {"request": request, "changes": changes})
+    return templates.TemplateResponse(request=request, name="index.html", context={"changes": changes})
