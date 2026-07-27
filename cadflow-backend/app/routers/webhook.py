@@ -1,10 +1,10 @@
 from app.tasks import process_github_webhook
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, BackgroundTasks
 
 router = APIRouter(prefix="/webhook", tags=["webhook"])
 
 @router.post("/github")
-async def github_webhook(request: Request):
+async def github_webhook(request: Request, background_tasks: BackgroundTasks):
     payload = await request.json()
     
     # In a real app, you'd extract the PR number, commit SHA, and download the changed CAD file.
@@ -13,8 +13,7 @@ async def github_webhook(request: Request):
     pr_number = payload.get("pull_request", {}).get("number", 0)
     commit_sha = payload.get("pull_request", {}).get("head", {}).get("sha", "unknown")
     
-    # Mocking the file download (in reality, you'd fetch from GitHub API)
-    # The worker task will handle generating the mock DXF for the pipeline.
-    task = process_github_webhook.delay(pr_number, commit_sha, "sample.dxf")
+    # Run the processing pipeline as a FastAPI Background Task instead of Celery
+    background_tasks.add_task(process_github_webhook, pr_number, commit_sha, "sample.dxf")
     
     return {"status": "accepted", "message": f"Pipeline triggered for PR {pr_number}"}

@@ -3,10 +3,9 @@ import tempfile
 
 import ezdxf
 import httpx
-from app.celery_app import celery_app
-from celery.utils.log import get_task_logger
+import logging
 
-logger = get_task_logger(__name__)
+logger = logging.getLogger(__name__)
 
 # Base URL for the monolith APIs. Can be overridden in production (e.g. internal Render URL)
 API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
@@ -20,8 +19,7 @@ def generate_mock_dxf(filepath: str):
     # msp.add_line((1, 1), (1, 1.05))  # Removed intentional micro-geometry that fails validation
     doc.saveas(filepath)
 
-@celery_app.task(bind=True)
-def process_github_webhook(self, pr_number: int, commit_sha: str, filename: str):
+def process_github_webhook(pr_number: int, commit_sha: str, filename: str):
     logger.warning(f"Starting pipeline for {filename} (PR #{pr_number})")
     
     # 1. Download/Generate CAD File
