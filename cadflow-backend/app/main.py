@@ -5,8 +5,6 @@ from app.database.session import engine, get_db
 from app.database import models
 from fastapi import Depends
 
-# Create DB tables if they don't exist (Useful for easy local runs without alembic)
-models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="CADFlow Modular Monolith API")
 
