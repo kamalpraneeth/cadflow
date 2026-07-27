@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Base URL for the monolith APIs. Can be overridden in production (e.g. internal Render URL)
-API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
+API_BASE = os.getenv("API_BASE_URL", f"http://localhost:{os.getenv('PORT', '8000')}")
 
 def generate_mock_dxf(filepath: str):
     doc = ezdxf.new('R2010')
