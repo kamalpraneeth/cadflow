@@ -56,6 +56,9 @@ def update_score(change_id: int, score_data: ScoreUpdate, db: Session = Depends(
     db.commit()
     return {"status": "updated"}
 
+from sqlalchemy import text
+
+
 @router.delete("/changes/{change_id}")
 def delete_change(change_id: int, db: Session = Depends(get_db)):
     change = db.query(CADChange).filter(CADChange.id == change_id).first()
@@ -64,4 +67,10 @@ def delete_change(change_id: int, db: Session = Depends(get_db)):
     
     db.delete(change)
     db.commit()
+    
+    # If the table is now empty, reset the ID counter to 1
+    if db.query(CADChange).count() == 0:
+        db.execute(text("ALTER SEQUENCE cad_changes_id_seq RESTART WITH 1"))
+        db.commit()
+        
     return {"status": "deleted"}

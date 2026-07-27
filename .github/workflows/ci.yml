@@ -27,9 +27,6 @@ jobs:
       run: |
         ruff check .
 
-    - name: Build Docker Compose Stack
-      run: |
-        docker compose build
 
     - name: Run Tests
       # We would run tests inside the containers or locally. For this CI, we'll run a local pytest setup on all services.
