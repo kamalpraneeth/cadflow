@@ -22,7 +22,14 @@
         .valid { background-color: #dafbe1; color: #1a7f37; }
         .invalid { background-color: #FFEBE9; color: #cf222e; }
         .anomalous { background-color: #fff8c5; color: #9a6700; }
-        .summary { font-size: 14px; color: #57606a; max-width: 250px; }
+        .summary { font-size: 14px; color: #57606a; max-width: 350px; }
+        .line-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         #canvas-container { flex-grow: 1; width: 100%; min-height: 400px; background: #222; border-radius: 4px; overflow: hidden; position: relative;}
         .instruction { font-size: 12px; color: #8b949e; margin-top: 10px; text-align: center; }
     </style>
@@ -69,8 +76,10 @@
                             <span class="badge valid">Normal</span>
                             {% endif %}
                         </td>
-                        <td class="summary">
-                            {{ change.ai_summary or "Pending..." }}
+                        <td class="summary" title="{{ change.ai_summary }}">
+                            <div class="line-clamp">
+                                {{ change.ai_summary or "Pending..." }}
+                            </div>
                         </td>
                     </tr>
                     {% else %}
