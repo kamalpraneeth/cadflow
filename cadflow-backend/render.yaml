@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: cadflow-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: API_BASE_URL
+        # In render, web services can talk via internal URLs, or you can use your public onrender.com URL
+        # For simplicity, we assume we point it to the public url (to be set in Dashboard)
+        sync: false
+
+  - type: worker
+    name: cadflow-celery
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A app.celery_app worker --loglevel=info
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: API_BASE_URL
+        sync: false

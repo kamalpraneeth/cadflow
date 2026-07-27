@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cadflow
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  validator-service:
+    build: ./validator-service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./shared_data:/shared_data
+
+  converter-service:
+    build: ./converter-service
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./shared_data:/shared_data
+
+  metadata-service:
+    build: ./metadata-service
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/cadflow
+    ports:
+      - "8003:8003"
+    depends_on:
+      - db
+
+  ai-agent-service:
+    build: ./ai-agent-service
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-mock_key}
+    ports:
+      - "8004:8004"
+
+  api-gateway:
+    build: ./api-gateway
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      VALIDATOR_URL: http://validator-service:8001
+      CONVERTER_URL: http://converter-service:8002
+      METADATA_URL: http://metadata-service:8003
+      AI_AGENT_URL: http://ai-agent-service:8004
+    ports:
+      - "8010:8000"
+    volumes:
+      - ./shared_data:/shared_data
+    depends_on:
+      - redis
+      - validator-service
+      - converter-service
+      - metadata-service
+      - ai-agent-service
+
+  celery-worker:
+    build: ./api-gateway
+    command: celery -A celery_app worker --loglevel=info
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      VALIDATOR_URL: http://validator-service:8001
+      CONVERTER_URL: http://converter-service:8002
+      METADATA_URL: http://metadata-service:8003
+      AI_AGENT_URL: http://ai-agent-service:8004
+    volumes:
+      - ./shared_data:/shared_data
+    depends_on:
+      - redis
+      - api-gateway
+
+  dashboard:
+    build: ./dashboard
+    environment:
+      METADATA_URL: http://metadata-service:8003
+    ports:
+      - "8005:8005"
+    depends_on:
+      - metadata-service
+
+volumes:
+  postgres_data:

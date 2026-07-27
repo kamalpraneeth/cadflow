@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+anthropic
+scikit-learn
+pydantic
+numpy

@@ -1,0 +1,25 @@
+name: CAD PR Check & AI Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '**.dxf'
+
+jobs:
+  cad_review:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # Need history to compare with base branch
+
+    - name: Trigger API Gateway Webhook
+      env:
+        WEBHOOK_URL: ${{ secrets.CADFLOW_WEBHOOK_URL }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # In a real scenario, GitHub sends the webhook directly to our public URL (e.g. via ngrok).
+        # Alternatively, we can curl our deployed API gateway here.
+        echo "CAD files changed. The GitHub webhook will trigger the CADFlow pipeline."

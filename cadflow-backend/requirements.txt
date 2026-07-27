@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+httpx
+pydantic
+ezdxf
+Pillow
+sqlalchemy
+psycopg2-binary
+alembic
+celery
+redis
+python-multipart
+scikit-learn
+numpy
+groq
+jinja2
