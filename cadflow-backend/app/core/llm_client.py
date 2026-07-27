@@ -31,7 +31,7 @@ def generate_cad_summary(old_meta: dict, new_meta: dict, filename: str) -> str:
     }
     
     payload = {
-        "model": "llama3-8b-8192",
+        "model": "llama-3.1-8b-instant",
         "messages": [
             {"role": "user", "content": prompt}
         ],
