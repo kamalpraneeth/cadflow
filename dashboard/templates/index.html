@@ -264,6 +264,7 @@
                         <th>AI Score</th>
                         <th>Anomaly</th>
                         <th>Neural Summary</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -299,10 +300,15 @@
                                 {{ change.ai_summary or "Processing neural data..." }}
                             </div>
                         </td>
+                        <td style="vertical-align: middle;">
+                            <button onclick="deleteChange({{ change.id }}, event)" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'" onmouseout="this.style.background='none'" title="Delete Record">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 40px;">No geometric telemetry intercepted yet.</td>
+                        <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 40px;">No geometric telemetry intercepted yet.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -465,6 +471,25 @@
                     btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Simulate Live Webhook';
                 }
             }, 5000);
+        }
+
+        async function deleteChange(id, event) {
+            event.stopPropagation(); // Prevent row click from loading geometry
+            if (!confirm("Are you sure you want to delete telemetry record #" + id + "?")) return;
+            
+            try {
+                const response = await fetch('/metadata/changes/' + id, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert("Failed to delete record.");
+                }
+            } catch (e) {
+                console.error("Error deleting", e);
+                alert("Error connecting to server.");
+            }
         }
     </script>
 </body>

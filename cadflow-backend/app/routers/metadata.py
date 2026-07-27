@@ -55,3 +55,13 @@ def update_score(change_id: int, score_data: ScoreUpdate, db: Session = Depends(
     
     db.commit()
     return {"status": "updated"}
+
+@router.delete("/changes/{change_id}")
+def delete_change(change_id: int, db: Session = Depends(get_db)):
+    change = db.query(CADChange).filter(CADChange.id == change_id).first()
+    if not change:
+        raise HTTPException(status_code=404, detail="Change not found")
+    
+    db.delete(change)
+    db.commit()
+    return {"status": "deleted"}
