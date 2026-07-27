@@ -16,4 +16,4 @@ curl -X POST http://localhost:8000/webhook/github \
      }'
 
 echo ""
-echo "Webhook sent! Check docker-compose logs for Celery worker output."
+echo "Webhook sent! Check docker compose logs for Celery worker output."

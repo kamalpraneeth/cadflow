@@ -2,7 +2,7 @@
 set -e
 
 echo "Starting CADFlow Stack..."
-docker-compose up --build -d
+docker compose up --build -d
 
 echo "Stack is starting. Waiting for services to become healthy..."
 sleep 10
