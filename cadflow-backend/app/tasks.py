@@ -10,13 +10,26 @@ logger = logging.getLogger(__name__)
 # Base URL for the monolith APIs. Can be overridden in production (e.g. internal Render URL)
 API_BASE = os.getenv("API_BASE_URL", f"http://localhost:{os.getenv('PORT', '8000')}")
 
+import random
+
+
 def generate_mock_dxf(filepath: str):
     doc = ezdxf.new('R2010')
     msp = doc.modelspace()
-    msp.add_lwpolyline([(1, 1), (9, 1), (9, 9), (1, 9)], close=True, dxfattribs={'layer': 'OUTLINE'})
-    msp.add_circle((5, 5), radius=2, dxfattribs={'layer': 'HOLES'})
-    msp.add_circle((2, 2), radius=0.5, dxfattribs={'layer': 'HOLES'})
-    # msp.add_line((1, 1), (1, 1.05))  # Removed intentional micro-geometry that fails validation
+    
+    # Base polyline with some random dimension shift to simulate realistic CAD edits
+    w = 8 + random.uniform(-2.0, 2.0)
+    h = 8 + random.uniform(-2.0, 2.0)
+    msp.add_lwpolyline([(1, 1), (1+w, 1), (1+w, 1+h), (1, 1+h)], close=True, dxfattribs={'layer': 'OUTLINE'})
+    
+    # Add a random number of circular holes
+    num_holes = random.randint(1, 6)
+    for _ in range(num_holes):
+        cx = random.uniform(2.0, w)
+        cy = random.uniform(2.0, h)
+        r = random.uniform(0.2, 0.8)
+        msp.add_circle((cx, cy), radius=r, dxfattribs={'layer': 'HOLES'})
+        
     doc.saveas(filepath)
 
 def process_github_webhook(pr_number: int, commit_sha: str, filename: str):
