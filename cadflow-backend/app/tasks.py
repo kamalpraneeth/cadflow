@@ -16,7 +16,7 @@ def generate_mock_dxf(filepath: str):
     msp.add_lwpolyline([(1, 1), (9, 1), (9, 9), (1, 9)], close=True, dxfattribs={'layer': 'OUTLINE'})
     msp.add_circle((5, 5), radius=2, dxfattribs={'layer': 'HOLES'})
     msp.add_circle((2, 2), radius=0.5, dxfattribs={'layer': 'HOLES'})
-    msp.add_line((1, 1), (1, 1.05))  # Micro-geometry to fail validation
+    # msp.add_line((1, 1), (1, 1.05))  # Removed intentional micro-geometry that fails validation
     doc.saveas(filepath)
 
 @celery_app.task(bind=True)
