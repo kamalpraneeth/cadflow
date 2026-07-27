@@ -1,5 +1,5 @@
 from app.tasks import process_github_webhook
-from fastapi import APIRouter, Request, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Request
 
 router = APIRouter(prefix="/webhook", tags=["webhook"])
 
