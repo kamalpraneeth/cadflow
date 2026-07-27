@@ -1,8 +1,9 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse
-import tempfile
-import ezdxf
 import os
+import tempfile
+
+import ezdxf
+from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/converter", tags=["converter"])
 

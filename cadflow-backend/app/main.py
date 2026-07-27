@@ -1,10 +1,8 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.routers import validator, converter, metadata, ai, webhook
-from app.database.session import engine, get_db
 from app.database import models
-from fastapi import Depends
-
+from app.database.session import get_db
+from app.routers import ai, converter, metadata, validator, webhook
+from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="CADFlow Modular Monolith API")
 
@@ -22,13 +20,14 @@ app.include_router(metadata.router)
 app.include_router(ai.router)
 app.include_router(webhook.router)
 
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi import Request
-
 # Mount the templates directory from the old dashboard folder (or we can copy it)
 # Assuming you run this from the cadflow-backend directory, we'll go up one level to find dashboard/templates
 import os
+
+from fastapi import Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../dashboard/templates"))
 templates = Jinja2Templates(directory=template_dir)
 

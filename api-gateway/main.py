@@ -1,7 +1,6 @@
-from fastapi import FastAPI, Request, HTTPException
 import logging
 
-from celery_app import celery_app
+from fastapi import FastAPI, Request
 from tasks import process_github_webhook
 
 app = FastAPI(title="CADFlow API Gateway")

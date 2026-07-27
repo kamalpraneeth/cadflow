@@ -1,11 +1,11 @@
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
-from app.database.session import get_db
-from app.database.models import CADChange
-from app.core.llm_client import generate_cad_summary
 import numpy as np
+from app.core.llm_client import generate_cad_summary
+from app.database.models import CADChange
+from app.database.session import get_db
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 from sklearn.ensemble import IsolationForest
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 

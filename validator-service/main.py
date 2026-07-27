@@ -1,17 +1,17 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
-import shutil
 import os
-from pydantic import BaseModel
-from typing import Dict, Any
+import shutil
+from typing import Any
 
 from core.validator import validate_dxf
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from pydantic import BaseModel
 
 app = FastAPI(title="CADFlow Validator Service")
 
 class ValidationResult(BaseModel):
     is_valid: bool
     errors: list[str]
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 @app.get("/health")
 def health_check():
@@ -31,7 +31,7 @@ async def validate_file(file: UploadFile = File(...)):
         is_valid, errors, metadata = validate_dxf(temp_path)
     except Exception as e:
         os.remove(temp_path)
-        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing file: {e!s}")
     
     os.remove(temp_path)
     

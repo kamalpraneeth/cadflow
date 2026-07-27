@@ -1,0 +1,7 @@
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# FastAPI uses function calls in default arguments (Depends, File) which triggers B008
+# We also ignore some strict rules for this project
+extend-ignore = ["B008", "ASYNC230", "ASYNC210", "BLE001", "PLR1722", "F841"]

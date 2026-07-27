@@ -1,10 +1,12 @@
-import ezdxf
-from ezdxf.addons.drawing import RenderContext, Frontend
-from ezdxf.addons.drawing.svg import SVGBackend
 import io
-from typing import Dict, Any
+from typing import Any
 
-def convert_dxf_to_json(filepath: str) -> Dict[str, Any]:
+import ezdxf
+from ezdxf.addons.drawing import Frontend, RenderContext
+from ezdxf.addons.drawing.svg import SVGBackend
+
+
+def convert_dxf_to_json(filepath: str) -> dict[str, Any]:
     """
     Converts core DXF entities into a structured JSON payload for web rendering or diffing.
     """

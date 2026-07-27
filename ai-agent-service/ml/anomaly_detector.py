@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.ensemble import IsolationForest
 
+
 def extract_features(meta: dict) -> list:
     """
     Extract a simple numerical feature vector from CAD metadata.

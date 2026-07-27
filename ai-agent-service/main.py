@@ -1,15 +1,15 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Dict, Any, List
+from typing import Any
 
 from core.anthropic_client import generate_cad_summary
+from fastapi import FastAPI, HTTPException
 from ml.anomaly_detector import detect_anomaly
+from pydantic import BaseModel
 
 app = FastAPI(title="CADFlow AI Agent Service")
 
 class AnalysisRequest(BaseModel):
-    old_metadata: Dict[str, Any]
-    new_metadata: Dict[str, Any]
+    old_metadata: dict[str, Any]
+    new_metadata: dict[str, Any]
     filename: str
 
 class AnalysisResponse(BaseModel):

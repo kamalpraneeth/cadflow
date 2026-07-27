@@ -1,7 +1,9 @@
-import ezdxf
-from typing import Tuple, List, Dict, Any
+from typing import Any
 
-def validate_dxf(filepath: str) -> Tuple[bool, List[str], Dict[str, Any]]:
+import ezdxf
+
+
+def validate_dxf(filepath: str) -> tuple[bool, list[str], dict[str, Any]]:
     """
     Validates a DXF file for engineering tolerances and extracts metadata.
     Returns: (is_valid, list of errors, metadata dictionary)
@@ -18,11 +20,11 @@ def validate_dxf(filepath: str) -> Tuple[bool, List[str], Dict[str, Any]]:
     
     try:
         doc = ezdxf.readfile(filepath)
-    except IOError:
+    except OSError:
         errors.append("Not a valid DXF file or could not be read.")
         return False, errors, metadata
     except ezdxf.DXFStructureError as e:
-        errors.append(f"Invalid or corrupted DXF structure: {str(e)}")
+        errors.append(f"Invalid or corrupted DXF structure: {e!s}")
         return False, errors, metadata
 
     msp = doc.modelspace()

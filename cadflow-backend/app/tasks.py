@@ -1,9 +1,10 @@
 import os
 import tempfile
-import httpx
-from celery.utils.log import get_task_logger
-from app.celery_app import celery_app
+
 import ezdxf
+import httpx
+from app.celery_app import celery_app
+from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
 

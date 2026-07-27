@@ -1,6 +1,6 @@
-import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 db_url = None
 with open("cadflow-backend/.env", "r") as f:
     for line in f:
@@ -17,10 +17,7 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 db = SessionLocal()
 
-from app.database import models
 import app.database.models as md
-
-import httpx
 
 groq_key = None
 with open("cadflow-backend/.env", "r") as f:
@@ -28,8 +25,8 @@ with open("cadflow-backend/.env", "r") as f:
         if line.startswith("GROQ_API_KEY="):
             groq_key = line.strip().split("=")[1].strip('"')
 
-from app.core import llm_client
-import app.core.config as config
+from app.core import config, llm_client
+
 config.settings.groq_api_key = groq_key
 
 changes = db.query(md.CADChange).order_by(md.CADChange.id.desc()).limit(3).all()

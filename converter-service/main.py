@@ -1,9 +1,9 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
-from fastapi.responses import JSONResponse, Response
-import shutil
 import os
+import shutil
 
 from core.converter import convert_dxf_to_json, convert_dxf_to_svg
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.responses import JSONResponse, Response
 
 app = FastAPI(title="CADFlow Converter Service")
 
@@ -24,7 +24,7 @@ async def convert_to_json(file: UploadFile = File(...)):
         json_data = convert_dxf_to_json(temp_path)
     except Exception as e:
         os.remove(temp_path)
-        raise HTTPException(status_code=500, detail=f"Error converting file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error converting file: {e!s}")
         
     os.remove(temp_path)
     return JSONResponse(content=json_data)
@@ -42,7 +42,7 @@ async def convert_to_svg(file: UploadFile = File(...)):
         svg_content = convert_dxf_to_svg(temp_path)
     except Exception as e:
         os.remove(temp_path)
-        raise HTTPException(status_code=500, detail=f"Error converting file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error converting file: {e!s}")
         
     os.remove(temp_path)
     return Response(content=svg_content, media_type="image/svg+xml")

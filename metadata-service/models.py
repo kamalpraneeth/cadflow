@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, JSON, DateTime
-from sqlalchemy.sql import func
 from database import Base
+from sqlalchemy import JSON, Boolean, Column, DateTime, Float, Integer, String
+from sqlalchemy.sql import func
+
 
 class CADChange(Base):
     __tablename__ = "cad_changes"

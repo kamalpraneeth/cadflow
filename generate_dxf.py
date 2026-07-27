@@ -1,5 +1,7 @@
-import ezdxf
 import os
+
+import ezdxf
+
 
 def create_sample_dxf(filename):
     doc = ezdxf.new('R2010')

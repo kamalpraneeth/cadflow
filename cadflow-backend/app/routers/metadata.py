@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from typing import List, Dict, Any
-from app.database.session import get_db
+
 from app.database.models import CADChange
+from app.database.session import get_db
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/metadata", tags=["metadata"])
 

@@ -1,7 +1,8 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
-import tempfile
-import ezdxf
 import os
+import tempfile
+
+import ezdxf
+from fastapi import APIRouter, File, HTTPException, UploadFile
 
 router = APIRouter(prefix="/validator", tags=["validator"])
 
@@ -65,7 +66,7 @@ async def validate_dxf(file: UploadFile = File(...)):
             "metadata": metadata
         }
     except Exception as e:
-        return {"is_valid": False, "errors": [f"File parsing error: {str(e)}"], "metadata": {}}
+        return {"is_valid": False, "errors": [f"File parsing error: {e!s}"], "metadata": {}}
     finally:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)

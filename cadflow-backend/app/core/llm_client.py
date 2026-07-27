@@ -1,7 +1,8 @@
-import os
 import json
+
 import httpx
 from app.core.config import settings
+
 
 def generate_cad_summary(old_meta: dict, new_meta: dict, filename: str) -> str:
     """

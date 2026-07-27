@@ -1,5 +1,5 @@
-from app.database.session import engine
 from app.database import models
+from app.database.session import engine
 
 print("Dropping tables...")
 models.Base.metadata.drop_all(bind=engine)

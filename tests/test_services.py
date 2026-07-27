@@ -1,6 +1,6 @@
-import httpx
-import pytest
 import os
+
+import httpx
 
 VALIDATOR_URL = os.getenv("VALIDATOR_URL", "http://localhost:8001")
 CONVERTER_URL = os.getenv("CONVERTER_URL", "http://localhost:8002")

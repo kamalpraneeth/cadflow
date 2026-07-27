@@ -1,4 +1,5 @@
 import os
+
 from pydantic import BaseModel
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5433/cadflow")

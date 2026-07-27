@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
-from typing import List
 
-import models, schemas, database
+import database
+import models
+import schemas
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.orm import Session
 
 app = FastAPI(title="CADFlow Metadata Service")
 
@@ -32,10 +33,10 @@ def update_score(change_id: int, score_data: schemas.CADChangeUpdateScore, db: S
     db.refresh(db_change)
     return db_change
 
-@app.get("/changes/", response_model=List[schemas.CADChange])
+@app.get("/changes/", response_model=list[schemas.CADChange])
 def list_changes(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
     return db.query(models.CADChange).order_by(models.CADChange.created_at.desc()).offset(skip).limit(limit).all()
 
-@app.get("/changes/history/{filename}", response_model=List[schemas.CADChange])
+@app.get("/changes/history/{filename}", response_model=list[schemas.CADChange])
 def get_file_history(filename: str, db: Session = Depends(database.get_db)):
     return db.query(models.CADChange).filter(models.CADChange.filename == filename).order_by(models.CADChange.created_at.desc()).all()
