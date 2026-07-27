@@ -24,6 +24,7 @@ def generate_cad_summary(old_meta: dict, new_meta: dict, filename: str) -> str:
     Please provide a concise, professional summary of what changed (e.g., 'Added 5 lines, changed bounding box width by 10%').
     Also state if the changes seem typical or potentially problematic (e.g. layers were deleted).
     CRITICAL: Output plain text ONLY. Do NOT use any markdown formatting, bullet points, or asterisks.
+    """
 
     headers = {
         "Authorization": f"Bearer {settings.groq_api_key}",
