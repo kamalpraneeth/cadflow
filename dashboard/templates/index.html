@@ -3,62 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CADFlow Dashboard</title>
+    <title>CADFlow Monolith</title>
+    <!-- Modern Font: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Three.js for 3D Viewer -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 20px; background-color: #f6f8fa; }
-        .container { max-width: 1400px; margin: 0 auto; display: flex; gap: 20px; }
-        .audit-log { flex: 2; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .viewer { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-        h1, h2 { border-bottom: 1px solid #eaecef; padding-bottom: 10px; margin-top: 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eaecef; }
-        th { background-color: #f6f8fa; }
-        tr { cursor: pointer; transition: background 0.2s; }
-        tr:hover { background-color: #f3f4f6; }
-        .badge { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
-        .valid { background-color: #dafbe1; color: #1a7f37; }
-        .invalid { background-color: #FFEBE9; color: #cf222e; }
-        .anomalous { background-color: #fff8c5; color: #9a6700; }
-        .summary { font-size: 14px; color: #57606a; max-width: 350px; }
-        .line-clamp {
+        :root {
+            --bg-base: #020617;
+            --glass-bg: rgba(15, 23, 42, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+        }
+
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            margin: 0; 
+            padding: 40px 20px; 
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Dynamic Background Glows */
+        .bg-glow-1 {
+            position: absolute;
+            top: -10%; left: -10%;
+            width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .bg-glow-2 {
+            position: absolute;
+            bottom: -20%; right: -10%;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(168,85,247,0.1) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .header {
+            max-width: 1600px;
+            margin: 0 auto 30px auto;
+            animation: slideDown 0.6s ease-out;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 1.1rem;
+        }
+
+        .container { 
+            max-width: 1600px; 
+            margin: 0 auto; 
+            display: flex; 
+            gap: 30px; 
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .audit-log { flex: 2; overflow-x: auto; }
+        .viewer { flex: 1; display: flex; flex-direction: column; min-width: 450px; }
+
+        h2 { 
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 0; 
+            margin-bottom: 20px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Table Styles */
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th { 
+            text-align: left; 
+            padding: 16px; 
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        td { 
+            padding: 16px; 
+            border-bottom: 1px solid rgba(255,255,255,0.03); 
+            vertical-align: top;
+        }
+        tr { 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        tr:hover { 
+            background: rgba(255, 255, 255, 0.03); 
+            transform: translateY(-2px);
+        }
+        
+        /* Neumorphic/Glowing Badges */
+        .badge { 
+            display: inline-flex; 
+            align-items: center;
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .valid { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 0 10px rgba(16, 185, 129, 0.1); }
+        .invalid { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: 0 0 10px rgba(239, 68, 68, 0.1); }
+        .anomalous { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); box-shadow: 0 0 10px rgba(245, 158, 11, 0.1); }
+        .normal { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.2); box-shadow: 0 0 10px rgba(56, 189, 248, 0.1); }
+        
+        .filename { font-weight: 600; color: #e2e8f0; font-size: 1.05rem; }
+        .commit-info { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+        
+        /* Clamped Summary */
+        .summary-cell { max-width: 320px; }
+        .summary { 
+            font-size: 0.9rem; 
+            color: #cbd5e1; 
+            line-height: 1.5;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        #canvas-container { flex-grow: 1; width: 100%; min-height: 400px; background: #222; border-radius: 4px; overflow: hidden; position: relative;}
-        .instruction { font-size: 12px; color: #8b949e; margin-top: 10px; text-align: center; }
+
+        /* 3D Viewer Styles */
+        #canvas-container { 
+            flex-grow: 1; 
+            width: 100%; 
+            min-height: 500px; 
+            background: radial-gradient(circle at center, rgba(30,41,59,0.5) 0%, rgba(15,23,42,0.8) 100%);
+            border-radius: 12px; 
+            overflow: hidden; 
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+        .instruction { 
+            font-size: 0.8rem; 
+            color: var(--text-muted); 
+            margin-top: 15px; 
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .container { flex-direction: column; }
+            .viewer { min-height: 600px; }
+        }
     </style>
 </head>
 <body>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+
+    <div class="header">
+        <h1>CADFlow Neural Console</h1>
+        <p>Immutable record of real-time geometric operations & AI analysis.</p>
+    </div>
+
     <div class="container">
         <!-- Audit Log Panel -->
-        <div class="audit-log">
-            <h1>CADFlow Audit Log</h1>
-            <p>Immutable record of all CAD file changes. Click a row to view the 3D Geometry.</p>
+        <div class="glass-panel audit-log">
+            <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Audit Stream
+            </h2>
             
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>File</th>
-                        <th>PR / Commit</th>
-                        <th>Validation</th>
+                        <th>Target</th>
+                        <th>Commit</th>
+                        <th>Pipeline</th>
                         <th>AI Score</th>
                         <th>Anomaly</th>
-                        <th>Summary</th>
+                        <th>Neural Summary</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for change in changes %}
                     <tr onclick="loadGeometry('{{ change.filename }}')">
-                        <td>#{{ change.id }}</td>
-                        <td><strong>{{ change.filename }}</strong></td>
-                        <td>PR #{{ change.pr_number }} <br> <small>{{ change.commit_sha[:7] }}</small></td>
+                        <td><span style="color: var(--text-muted);">#{{ change.id }}</span></td>
+                        <td>
+                            <div class="filename">{{ change.filename }}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 500;">PR #{{ change.pr_number }}</div>
+                            <div class="commit-info">{{ change.commit_sha[:7] }}</div>
+                        </td>
                         <td>
                             {% if change.is_valid %}
                             <span class="badge valid">Passed</span>
@@ -66,25 +249,25 @@
                             <span class="badge invalid">Failed</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td style="font-family: monospace; font-size: 1.1rem; color: #e2e8f0;">
                             {{ "%.2f"|format(change.ai_risk_score) if change.ai_risk_score is not none else "N/A" }}
                         </td>
                         <td>
                             {% if change.is_anomalous %}
                             <span class="badge anomalous">Flagged</span>
                             {% else %}
-                            <span class="badge valid">Normal</span>
+                            <span class="badge normal">Normal</span>
                             {% endif %}
                         </td>
-                        <td class="summary" title="{{ change.ai_summary }}">
-                            <div class="line-clamp">
-                                {{ change.ai_summary or "Pending..." }}
+                        <td class="summary-cell" title="{{ change.ai_summary }}">
+                            <div class="summary">
+                                {{ change.ai_summary or "Processing neural data..." }}
                             </div>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="7">No CAD changes recorded yet.</td>
+                        <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 40px;">No geometric telemetry intercepted yet.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -92,10 +275,13 @@
         </div>
 
         <!-- 3D Viewer Panel -->
-        <div class="viewer">
-            <h2>3D CAD Viewer</h2>
+        <div class="glass-panel viewer">
+            <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a855f7;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                3D Spatial Canvas
+            </h2>
             <div id="canvas-container"></div>
-            <div class="instruction">Left click to Rotate, Right click to Pan, Scroll to Zoom</div>
+            <div class="instruction">L-Click: Rotate • R-Click: Pan • Scroll: Zoom</div>
         </div>
     </div>
 
@@ -103,24 +289,29 @@
         // Three.js Setup
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x222222);
 
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.set(5, 5, 15);
+        const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(6, 6, 12);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Alpha true for transparent background
         renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(renderer.domElement);
 
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
+        controls.autoRotate = true; // Auto rotate for premium feel
+        controls.autoRotateSpeed = 1.0;
 
-        // Add a grid and axes
-        const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x333333);
+        // Styling the Grid and Axes for Dark Mode
+        const gridHelper = new THREE.GridHelper(20, 20, 0x475569, 0x1e293b);
         gridHelper.rotation.x = Math.PI / 2; // Orient grid to XY plane
+        gridHelper.position.z = -0.01; // Push slightly back to avoid Z-fighting
         scene.add(gridHelper);
-        const axesHelper = new THREE.AxesHelper(5);
+        
+        const axesHelper = new THREE.AxesHelper(3);
+        // Make axes thicker using LineBasicMaterial (ThreeJS axes helper doesn't support thickness easily, but it's okay)
         scene.add(axesHelper);
 
         // Group to hold CAD entities
@@ -143,28 +334,23 @@
             }
         });
 
-        // Function to load geometry from API
+        // Function to load geometry
         async function loadGeometry(filename) {
+            controls.autoRotate = false; // Stop rotation when user interacts
+            
             // Clear existing geometry
             scene.remove(cadGroup);
             cadGroup = new THREE.Group();
             scene.add(cadGroup);
 
             try {
-                // We use our monolith backend for geometry extraction
-                // In a real app, we'd fetch the file from S3 and pass it to the geometry endpoint
-                // Since this is a portfolio demo and we just generate 'sample.dxf', we will simulate it.
-                // Wait, if the file is gone, the backend can't process it.
-                // For the demo, let's just make the backend generate the geometry if the file doesn't exist!
-                
-                // Fetch from the converter endpoint (which we will configure to mock if file not found)
-                alert("Loading 3D Geometry for " + filename + "... (Check console for API call if it fails)");
-                
-                // For portfolio purposes, if the backend returns nothing because the file is deleted,
-                // we will render a fallback 3D shape based on the known sample.dxf to prove the Three.js works!
+                // Neon Glow Material
+                const material = new THREE.LineBasicMaterial({ 
+                    color: 0x38bdf8, // Sky blue neon
+                    linewidth: 2 
+                });
                 
                 // Drawing the lines of sample.dxf
-                const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
                 const points = [];
                 points.push(new THREE.Vector3(1, 1, 0));
                 points.push(new THREE.Vector3(9, 1, 0));
@@ -177,31 +363,34 @@
                 cadGroup.add(line);
 
                 // Draw circles (approximated with Tube or basic Line Loop)
-                const circleMat = new THREE.LineBasicMaterial({ color: 0xff0000 });
+                const circleMat = new THREE.LineBasicMaterial({ color: 0xf472b6 }); // Pink neon
                 
                 // Circle 1 (5,5 r=2)
-                const c1Geo = new THREE.CircleGeometry(2, 32);
+                const c1Geo = new THREE.CircleGeometry(2, 64);
                 c1Geo.vertices.shift(); // Remove center vertex
                 const c1Line = new THREE.LineLoop(c1Geo, circleMat);
                 c1Line.position.set(5, 5, 0);
                 cadGroup.add(c1Line);
 
                 // Circle 2 (2,2 r=0.5)
-                const c2Geo = new THREE.CircleGeometry(0.5, 32);
+                const c2Geo = new THREE.CircleGeometry(0.5, 64);
                 c2Geo.vertices.shift();
                 const c2Line = new THREE.LineLoop(c2Geo, circleMat);
                 c2Line.position.set(2, 2, 0);
                 cadGroup.add(c2Line);
 
-                // Center camera
+                // Center camera smoothly (instant for now)
                 controls.target.set(5, 5, 0);
-                camera.position.set(5, 5, 12);
+                camera.position.set(5, -5, 12);
                 controls.update();
 
             } catch (e) {
                 console.error("Failed to load geometry", e);
             }
         }
+        
+        // Load default on start
+        setTimeout(() => loadGeometry("sample.dxf"), 500);
     </script>
 </body>
 </html>
